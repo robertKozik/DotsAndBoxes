@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">DotsAndBoxes</string>
+    <string name="startGameButton">Start magic!</string>
+    <string name="MAIN_MENU">MainMenu</string>
+    <string name="GAME">Game</string>
+</resources>
