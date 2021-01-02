@@ -1,6 +1,145 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="horizontal"
+    android:gravity="center_vertical">
+    <TextView
+        android:id="@+id/SettingsTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/SETTINGS"
+        android:textAlignment="center"
+        android:textSize="60sp"
+        android:layout_marginBottom="10dp"
+        android:textColor="@color/font"/>
+    <RelativeLayout
+        android:id="@+id/BoardSizeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/SettingsTitle"
+        android:layout_margin="10dp"
+        android:padding="20dp"
+        android:background="@drawable/fancy_button">
+    <TextView
+        android:id="@+id/BoardSizeText"
+        android:layout_width="120dp"
+        android:layout_height="25dp"
+        android:text="Board Size:"
+        android:textSize="20sp"
+        android:textColor="@color/font"/>
+        <SeekBar
+            android:id="@+id/sizeBar"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_below="@+id/BoardSizeText"
+            android:layout_marginHorizontal="10dp"
+            android:max="8"
+            android:min="4"
+            />
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/bottomBorder"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_below="@+id/sizeBar"
+            android:layout_alignStart="@id/sizeBar"
+            android:background="#00000000"
+            android:gravity="center"
+            android:text="4"
+            android:textColor="@color/font" />
+
+        <TextView
+            android:id="@+id/currentBoardSize"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginBottom="40dp"
+            android:layout_centerInParent="true"
+            android:layout_below="@+id/sizeBar"
+            android:background="#00000000"
+            android:textColor="@color/font"
+            android:textAlignment="center"
+            android:textSize="20sp"/>
+
+        <TextView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignEnd="@+id/sizeBar"
+            android:layout_below="@+id/sizeBar"
+            android:background="#00000000"
+            android:gravity="center"
+            android:text="8"
+            android:textColor="@color/font" />
+
+        <TextView
+            android:id="@+id/PlayerOne"
+            android:layout_width="120dp"
+            android:layout_height="25dp"
+            android:layout_below="@id/currentBoardSize"
+            android:text="Player #1"
+            android:textSize="20sp"
+            android:textColor="@color/font"/>
+
+        <EditText
+            android:id="@+id/PlayerOneTextEdit"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_toEndOf="@id/PlayerOne"
+            android:layout_below="@id/currentBoardSize"
+            android:text="Player One"
+            android:textColor="@color/font"
+            android:textAlignment="center"
+            android:textSize="20sp"
+            android:inputType="text"
+            tools:ignore="Autofill" />
+        <Spinner
+            android:id="@+id/PlayerOneColor"
+            android:layout_width="120dp"
+            android:layout_height="25dp"
+            android:layout_marginBottom="20dp"
+            android:layout_below="@id/PlayerOne"
+            android:background="@drawable/fancy_button"
+            android:text="Color"
+            android:textSize="10sp"
+            android:textAlignment="center"
+            android:textColor="@color/font"
+            android:popupBackground="@color/background"/>
+
+        <EditText
+            android:id="@+id/PlayerTwoTextEdit"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_toRightOf="@id/PlayerTwo"
+            android:layout_below="@id/PlayerOneColor"
+            android:text="Player Two"
+            android:textColor="@color/font"
+            android:textAlignment="center"
+            android:textSize="20sp"
+            android:inputType="text"/>
+
+        <TextView
+            android:id="@+id/PlayerTwo"
+            android:layout_width="120dp"
+            android:layout_height="25dp"
+            android:layout_below="@id/PlayerOneColor"
+            android:text="Player #2"
+            android:textSize="20sp"
+            android:textColor="@color/font"
+            />
+        <Spinner
+            android:id="@+id/PlayerTwoColor"
+            android:layout_width="120dp"
+            android:layout_height="25dp"
+            android:layout_below="@id/PlayerTwo"
+            android:background="@drawable/fancy_button"
+            android:textSize="10sp"
+            android:textColor="@color/font"
+            android:textAlignment="center"
+            android:popupBackground="@color/background"/>
+    </RelativeLayout>
+
+
+
+</RelativeLayout>

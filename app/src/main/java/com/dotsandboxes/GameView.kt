@@ -1,19 +1,23 @@
 package com.dotsandboxes
 
-import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.*
-import android.util.DisplayMetrics
-import android.view.*
-import kotlin.random.Random
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.RectF
+import android.preference.PreferenceManager
+import android.view.MotionEvent
+import android.view.SurfaceHolder
+import android.view.SurfaceView
+import android.view.View
 
-class GameView(context: Context): SurfaceView(context), SurfaceHolder.Callback{
-    val dimensions: ScreenDimensions = ScreenDimensions(context)
-
+class GameView(context: Context): SurfaceView(context), SurfaceHolder.Callback {
+    private val dimensions = ScreenDimensions(context)
+    val myPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+    private val game = GameModel(myPreferences.getInt(context.resources.getString(R.string.BoardSize), 4), context)
+    private val gameController = GameController(game, dimensions)
     lateinit var thread: GameThread
-    private val game: Game = Game(4,context)
-    private val nodeToNodeDistance = dimensions.boardSize/(game.mapSize-1)
-    private val rectangle: Rectangle = Rectangle(dimensions)
+    //private val rectangle: Rectangle = Rectangle(dimensions)
 
     init {
         createThread()
@@ -26,7 +30,7 @@ class GameView(context: Context): SurfaceView(context), SurfaceHolder.Callback{
     }
 
     fun update() {
-        rectangle.updateElementPosition()
+        //rectangle.updateElementPosition()
     }
 
     override fun draw(canvas: Canvas?) {
@@ -34,27 +38,39 @@ class GameView(context: Context): SurfaceView(context), SurfaceHolder.Callback{
         if (canvas != null) {
             canvas.drawColor(Color.BLACK)
             //drawBoard(canvas)
+            //rectangle.drawMovingRectangle(canvas)
             drawTurnIndicator(canvas)
-            rectangle.drawMovingRectangle(canvas)
             drawLines(canvas)
             drawSquares(canvas)
             drawNodes(canvas)
             drawName(canvas)
             drawScore(canvas)
-
-
+            if(!game.gameState)
+                itsEndGameNow(canvas)
         }
     }
 
     private fun drawSquares(canvas: Canvas) {
-        game.squaresClosed.forEach{square ->
+        game.squaresClosed.forEach{ square ->
             run {
                 val paint: Paint = Paint()
-                paint.color = Color.rgb(255,255,255)//white
+                paint.color = Color.rgb(255, 255, 255)//white
                 paint.strokeWidth = 8F
                 var position = getNodePosition(square)
-                canvas.drawLine(position[0],position[1],position[0] + nodeToNodeDistance,position[1] - nodeToNodeDistance, paint)
-                canvas.drawLine(position[0] + nodeToNodeDistance,position[1],position[0],position[1] - nodeToNodeDistance, paint)
+                canvas.drawLine(
+                    position[0],
+                    position[1],
+                    position[0] + dimensions.nodeToNodeDistance,
+                    position[1] - dimensions.nodeToNodeDistance,
+                    paint
+                )
+                canvas.drawLine(
+                    position[0] + dimensions.nodeToNodeDistance,
+                    position[1],
+                    position[0],
+                    position[1] - dimensions.nodeToNodeDistance,
+                    paint
+                )
             }
         }
     }
@@ -77,90 +93,103 @@ class GameView(context: Context): SurfaceView(context), SurfaceHolder.Callback{
                 }
             }
         }
-    }
+    } //OK
 
     private fun drawTurnIndicator(canvas: Canvas) {
-        var paint: Paint = game.players[game.turn%2].paint
+        var paint: Paint = game.players[game.turn % 2].paint
         canvas.drawRoundRect(
-            RectF(0F,0F,
+            RectF(
+                0F, 0F,
                 dimensions.screenWidth.toFloat(), dimensions.screenHeight.toFloat()
-            ),80F,80F,paint)
+            ), dimensions.indicatorRadius, dimensions.indicatorRadius, paint
+        )
         paint = Paint()
-        paint.color = Color.rgb(0,0,0)
+        paint.color = Color.rgb(0, 0, 0)
         canvas.drawRoundRect(
-            RectF(6F,6F,
-                dimensions.screenWidth.toFloat()-6, dimensions.screenHeight.toFloat()-6
-            ),80F,80F,paint)
-    }
+            RectF(
+                dimensions.indicatorWidth, dimensions.indicatorWidth,
+                dimensions.screenWidth.toFloat() - 6, dimensions.screenHeight.toFloat() - 6
+            ), dimensions.indicatorRadius, dimensions.indicatorRadius, paint
+        )
+    } //OK
 
     private fun drawScore(canvas: Canvas){
 
-        var xPos = 100F
-        var yPos = 200F
+        var xPos = dimensions.scoreXPosition
+        var yPos = dimensions.scoreYPosition
         canvas.drawText(game.players[0].score.toString(), xPos, yPos, game.players[0].paint);
 
-        xPos = dimensions.screenWidth - 100F
-        yPos = 200F
+        xPos = dimensions.screenWidth - dimensions.scoreXPosition
         canvas.drawText(game.players[1].score.toString(), xPos, yPos, game.players[1].paint);
-    }
+    } //OK
 
     private fun drawName(canvas: Canvas){
-        val paint: Paint = Paint()
-        paint.color = game.players[game.turn%2].paint.color
+        val paint = Paint()
+        paint.color = game.players[game.turn % 2].paint.color
         paint.textAlign = Paint.Align.CENTER
         paint.textSize = 80F
 
-        val xPos = dimensions.screenWidth.toFloat()/2
-        val yPos = 80F
+        val xPos = dimensions.NameXPosition
+        val yPos = dimensions.NameYPosition
 
-        canvas.drawText(game.players[game.turn%2].name, xPos, yPos, paint);
-    }
+        canvas.drawText(game.players[game.turn % 2].name, dimensions.NameXPosition, dimensions.NameYPosition, paint);
+    } //OK
 
     private fun drawNodes(canvas: Canvas) {
-        val paint = Paint()
-        paint.color = Color.rgb(0,255,0)
         for(row in game.mapPoint){
-            for( node in row){
-                canvas.drawCircle(dimensions.horizontalMargain.toFloat()+(node.xCoodinate*nodeToNodeDistance),
-                    dimensions.verticalMargain.toFloat()+(node.yCoordinate*nodeToNodeDistance),
+            for( node in row ){
+                canvas.drawCircle(
+                    dimensions.horizontalMargain.toFloat() + (node.xCoodinate * dimensions.nodeToNodeDistance),
+                    dimensions.verticalMargain.toFloat() + (node.yCoordinate * dimensions.nodeToNodeDistance),
                     node.pointRadius,
-                    node.paint)
+                    node.paint
+                )
             }
         }
 
-    }
+    } //OK
 
     private fun getNodePosition(node: Point): Array<Float> {
-        return arrayOf(dimensions.horizontalMargain.toFloat()+(node.xCoodinate*nodeToNodeDistance),
-            dimensions.verticalMargain.toFloat()+(node.yCoordinate*nodeToNodeDistance))
-    }
+        return arrayOf(
+            dimensions.horizontalMargain.toFloat() + (node.xCoodinate * dimensions.nodeToNodeDistance),
+            dimensions.verticalMargain.toFloat() + (node.yCoordinate * dimensions.nodeToNodeDistance)
+        )
+    } //OK
 
-    private fun actionDown(x: Float, y: Float): Boolean {
-        val touchTolerance: Float = (dimensions.boardSize/(game.mapSize*2)).toFloat()
-        for(row in game.mapPoint) {
-            for (node in row) {
-                if( x > dimensions.horizontalMargain.toFloat()+(node.xCoodinate*nodeToNodeDistance) - touchTolerance
-                    && x < dimensions.horizontalMargain.toFloat()+(node.xCoodinate*nodeToNodeDistance) + touchTolerance
-                    && y > dimensions.verticalMargain.toFloat()+(node.yCoordinate*nodeToNodeDistance) - touchTolerance
-                    && y < dimensions.verticalMargain.toFloat()+(node.yCoordinate*nodeToNodeDistance) + touchTolerance) {
-                    game.tryToConnect(node)
-                    return true
-                }
-            }
+    private fun itsEndGameNow(canvas: Canvas) {
+        var paint: Paint? = game.winner?.paint
+        val name: String? = game.winner?.name
+
+        if (paint != null) {
+            canvas.drawRoundRect(RectF(dimensions.horizontalMargain.toFloat(),dimensions.screenHeight/2+200F,
+                dimensions.screenWidth-dimensions.horizontalMargain.toFloat(), dimensions.screenHeight/2-200F),
+                50F,50F,paint)
         }
-        return false
+        paint = Paint()
+        paint.color = Color.rgb(0, 0, 0)
+        canvas.drawRoundRect(RectF(dimensions.horizontalMargain.toFloat()+dimensions.messageBorderWidth,
+            dimensions.screenHeight/2+195F,
+            dimensions.screenWidth-dimensions.horizontalMargain.toFloat()-dimensions.messageBorderWidth,
+            dimensions.screenHeight/2-195F),
+            50F,50F,paint)
+
+        //Text
+        paint.color = game.winner?.paint?.color!!
+        paint.textAlign = Paint.Align.CENTER
+        paint.textSize = dimensions.textSize
+
+        val xPos = dimensions.screenWidth.toFloat()/2
+        val yPos = dimensions.screenHeight/2-40F
+
+        canvas.drawText("WINNER!", xPos, yPos, paint)
+        canvas.drawText(game.players[game.turn % 2].name, xPos, yPos+120F, paint)
     }
 
-    override fun surfaceCreated(p0: SurfaceHolder) {
-        thread.running = true
-        thread.start()
+    override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
     }
 
-    override fun surfaceChanged(p0: SurfaceHolder, p1: Int, p2: Int, p3: Int) {
-    }
-
-    override fun surfaceDestroyed(p0: SurfaceHolder) {
-        var retry: Boolean = true
+    override fun surfaceDestroyed(holder: SurfaceHolder) {
+        var retry = true
         while (retry) {
             try {
                 thread.running = false
@@ -172,81 +201,38 @@ class GameView(context: Context): SurfaceView(context), SurfaceHolder.Callback{
         }
     }
 
-    @SuppressLint("ClickableViewAccessibility")
-    override fun onTouchEvent(event: MotionEvent): Boolean {
-        val xAxis: Float = event.x
-        val yAxis: Float = event.y
-
-        when (event.action) {
-            MotionEvent.ACTION_DOWN -> {
-                actionDown(xAxis,yAxis)
-                return true
-            }
-        }
-        return false
+    override fun surfaceCreated(holder: SurfaceHolder) {
+        thread.running = true
+        thread.start()
     }
 
-
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        return gameController.actionPerformed(event);
+    }
 }
 
-class ScreenDimensions(context:Context) {
-    val screenHeight: Int
-    val screenWidth: Int
+data class ScreenDimensions(val context: Context) {
+
+    val screenHeight: Int = context.resources.displayMetrics.heightPixels
+    val screenWidth: Int = context.resources.displayMetrics.widthPixels
     val horizontalMargain: Int = 200
-    val boardSize: Int
-    val verticalMargain: Int
-    init {
-        screenHeight = context.resources.displayMetrics.heightPixels
-        screenWidth = context.resources.displayMetrics.widthPixels
-        boardSize = calculateBoardSize()
-        verticalMargain = calculateVerticalMargain()
-    }
-    private fun calculateBoardSize(): Int {
-        return screenWidth - 2 * horizontalMargain
-    }
-
-    private fun calculateVerticalMargain(): Int {
-        return (screenHeight - boardSize) / 2
-    }
-}
-
-class Rectangle(private val dimensions: ScreenDimensions) {
-    private var dx: Float = 15F
-    private var dy: Float = -10F
-    private var xx: Float = dimensions.screenWidth/2.toFloat()
-    private var yy: Float = dimensions.screenHeight/2.toFloat()
-    private var width: Float = 100F
-    private var rectPaint: Paint = Paint()
-
-    init {
-        rectPaint.color = Color.rgb(255,0,0)
-    }
-
-    fun drawMovingRectangle(canvas: Canvas) {
-        canvas.drawCircle(xx+width/2,yy+width/2,width/2,rectPaint)
-    }
-
-    fun updateElementPosition() {
-        yy+=dy
-        xx+=dx
-        if(yy > dimensions.verticalMargain + dimensions.screenWidth - 2 * dimensions.horizontalMargain - width
-            || yy < dimensions.verticalMargain){
-            dy *= -1
-            rectPaint.color = Color.rgb(Random.nextInt(0,255).toFloat(),
-                Random.nextInt(0,255).toFloat(),
-                Random.nextInt(0,255).toFloat())
-
-        }
-        if(xx < dimensions.horizontalMargain
-            || xx > dimensions.screenWidth - 2* dimensions.horizontalMargain + dimensions.horizontalMargain - width){
-            dx *= -1
-            rectPaint.color = Color.rgb(Random.nextInt(0,255).toFloat(),
-                Random.nextInt(0,255).toFloat(),
-                Random.nextInt(0,255).toFloat())
-        }
+    val boardSize: Int = screenWidth - 2 * horizontalMargain
+    val verticalMargain: Int = (screenHeight - boardSize) / 2
+    val nodeToNodeDistance = boardSize/(PreferenceManager.getDefaultSharedPreferences(context).getInt(context.resources.getString(R.string.BoardSize), 4)-1)
 
 
+    val scoreYPosition = 160F
+    val scoreXPosition = 100F
 
-    }
+    val indicatorRadius = 80F
+    val indicatorWidth = 6F
+    val lineStrokeWidth = 8F
+
+    val NameYPosition = 80F
+    val NameXPosition = screenWidth/2F
+
+    val messageBorderWidth = 5F
+
+    val textSize = 80F
 
 }

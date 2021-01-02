@@ -3,7 +3,16 @@
     <color name="colorPrimary">#6200EE</color>
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#03DAC5</color>
-    <color name="font">#000000</color>
+    <color name="font">#FEFEFE</color>
+    <color name="background">#000000</color>
     <color name="nodeNotSelected">#00FF00</color>
     <color name="nodeSelected">#0000FF</color>
+
+    <color name="Red">#FF0000</color>
+    <color name="Green">#008000</color>
+    <color name="Orange">#FE7F00</color>
+    <color name="Yellow">#FFFF00</color>
+    <color name="Pink">#FFC0CB</color>
+    <color name="Violet">#EE82EE</color>
+    <color name="Blue">#4169E1</color>
 </resources>

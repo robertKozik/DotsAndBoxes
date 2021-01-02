@@ -1,6 +1,24 @@
 <resources>
     <string name="app_name">DotsAndBoxes</string>
     <string name="startGameButton">Start magic!</string>
+    <string name="settingsButton">Settings</string>
     <string name="MAIN_MENU">MainMenu</string>
     <string name="GAME">Game</string>
+    <string name="SETTINGS">Settings</string>
+    <string name="EXIT">Exit</string>
+    <string name="PlayerOneNickname">PON</string>
+    <string name="PlayerTwoNickname">PTN</string>
+    <string name="PlayerOneColor">POC</string>
+    <string name="PlayerTwoColor">PTC</string>
+    <string name="BoardSize">BS</string>
+
+    <string-array name="colors_array">
+        <item>Red</item>
+        <item>Green</item>
+        <item>Orange</item>>
+        <item>Yellow</item>
+        <item>Pink</item>
+        <item>Violet</item>
+        <item>Blue</item>
+    </string-array>
 </resources>

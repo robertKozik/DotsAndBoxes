@@ -3,6 +3,7 @@ package com.dotsandboxes
 import android.content.Context
 import android.graphics.Paint
 import android.graphics.Color
+import android.preference.PreferenceManager
 import androidx.core.content.res.ResourcesCompat
 import java.lang.Math.abs
 import kotlin.random.Random
@@ -12,7 +13,10 @@ class Game(val mapSize: Int, private var context: Context) {
     var mapPoint: Array<Array<Point>>
     val squaresClosed: MutableList<Point> = mutableListOf()
     var players: Array<Player>
+    var winner: Player? = null
     val maxSquares: Int = (mapSize-1) * (mapSize-1)
+    var gameState: Boolean = true
+    val editor = PreferenceManager.getDefaultSharedPreferences(context)
 
     init {
         mapPoint = Array(mapSize) { row ->
@@ -20,7 +24,12 @@ class Game(val mapSize: Int, private var context: Context) {
                             Point(row, col,context)
                         }
                     }
-        players = arrayOf(Player("Player One"), Player( "Player Two"))
+        val playerOne = editor.getString(context.resources.getString(R.string.PlayerOneNickname),"Player One")!!
+        val playerOneColor = editor.getInt(context.resources.getString(R.string.PlayerOneColor), Color.rgb(255,0,0))!!
+        val playerTwo = editor.getString(context.resources.getString(R.string.PlayerTwoNickname),"Player One")!!
+        val playerTwoColor = editor.getInt(context.resources.getString(R.string.PlayerTwoColor), Color.rgb(0,255,0))!!
+
+        players = arrayOf(Player(playerOne, playerOneColor), Player( playerTwo, playerTwoColor))
 
 
     }
@@ -33,6 +42,7 @@ class Game(val mapSize: Int, private var context: Context) {
             if(nowSelectedNode.isLegalNeighbour(previousSelectedNode)
                 && !checkIfLineExists(newLine)){
                 players[turn%2].lines.add(newLine)
+                previousSelectedNode.clicked()
                 val squareClosed = checkIfSquareIsClosed()
                 if(squareClosed == 0) {
                     turn++
@@ -40,15 +50,24 @@ class Game(val mapSize: Int, private var context: Context) {
                 }else {
                     players[turn%2].score += squareClosed
                 }
-                if( squaresClosed.size == maxSquares )
+
+                if( squaresClosed.size == maxSquares ) {
+                    gameState = false
+                    winner = evaluateWinner()
+                }
                 return true
             }
-            previousSelectedNode.clicked()
         } else {
             nowSelectedNode.clicked()
-            return false
+            return true
         }
         return false
+    }
+
+    private fun evaluateWinner(): Player {
+        val player1Score = players[0].score
+        val player2Score = players[1].score
+        return if(player1Score>player2Score) players[0] else players[1]
     }
     private fun checkPointsClickState(): Point? {
         mapPoint.forEach { col ->
@@ -92,7 +111,7 @@ class Game(val mapSize: Int, private var context: Context) {
     }
 }
 
-class Point(var xCoodinate: Int, var yCoordinate: Int,var context: Context) {
+class Point2(var xCoodinate: Int, var yCoordinate: Int,var context: Context) {
     var isClicked: Boolean = false
     var paint: Paint = Paint()
     var pointRadius: Float = 20F
@@ -130,7 +149,7 @@ class Point(var xCoodinate: Int, var yCoordinate: Int,var context: Context) {
     }
 }
 
-class Line(var begin: Point, var end: Point) {
+class Line2(var begin: Point, var end: Point) {
     var orientation: Int
 
     init {
@@ -153,11 +172,13 @@ class Line(var begin: Point, var end: Point) {
     }
 }
 
-class Player(val name: String, var paint: Paint = Paint()) {
+class Player2(val name: String, var color: Int) {
+    var paint:Paint = Paint()
     var score: Int = 0
     var lines: MutableList<Line> = mutableListOf()
+
     init {
-        paint.color = Color.rgb(Random.nextInt(0,255), Random.nextInt(0,255), Random.nextInt(0,255))
+        paint.color = color
         paint.strokeWidth = 10F
         paint.textAlign = Paint.Align.CENTER
         paint.textSize = 200F

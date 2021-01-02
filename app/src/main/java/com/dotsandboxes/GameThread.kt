@@ -15,7 +15,7 @@ class GameThread(var surfaceHolder: SurfaceHolder, var gameView: GameView): Thre
         val targetFPS: Long = 60
         val targetTime: Long = 1000 / targetFPS
 
-        while(running){
+        while(running) {
             startTime = System.nanoTime()
             canvas = Canvas()
 
