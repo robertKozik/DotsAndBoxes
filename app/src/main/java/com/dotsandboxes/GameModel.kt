@@ -24,9 +24,9 @@ class GameModel(val mapSize: Int, val context: Context) {
 
         //init players
         val playerOne = editor.getString(context.resources.getString(R.string.PlayerOneNickname),"Player One")!!
-        val playerOneColor = editor.getInt(context.resources.getString(R.string.PlayerOneColor), Color.rgb(255,0,0))!!
+        val playerOneColor = editor.getInt(context.resources.getString(R.string.PlayerOneColor), Color.rgb(0,0,255))
         val playerTwo = editor.getString(context.resources.getString(R.string.PlayerTwoNickname),"Player One")!!
-        val playerTwoColor = editor.getInt(context.resources.getString(R.string.PlayerTwoColor), Color.rgb(0,255,0))!!
+        val playerTwoColor = editor.getInt(context.resources.getString(R.string.PlayerTwoColor), Color.rgb(0,255,0))
 
         players = arrayOf(Player(playerOne, playerOneColor), Player( playerTwo, playerTwoColor))
 

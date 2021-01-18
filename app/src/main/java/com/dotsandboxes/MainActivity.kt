@@ -31,8 +31,10 @@ class MainActivity(): Activity() {
         bar.setOnSeekBarChangeListener( BoardSizeBarListener(this) )
 
         val spinnerPlayerOne: Spinner = findViewById(R.id.PlayerOneColor)
+            spinnerPlayerOne.onItemSelectedListener = SpinnerActivity(this, 1);
             createSpinnerAdapter(spinnerPlayerOne)
         val spinnerPlayerTwo: Spinner = findViewById(R.id.PlayerTwoColor)
+            spinnerPlayerTwo.onItemSelectedListener = SpinnerActivity(this, 2);
             createSpinnerAdapter(spinnerPlayerTwo)
 
     }
@@ -55,10 +57,10 @@ class MainActivity(): Activity() {
                 yesterdayToast?.show()
             }
         } else if(activityState == R.string.SETTINGS) {
-            setContentView(R.layout.main_menu_layout)
-            //getNickInput()
+            getNickInput()
             activityState = R.string.MAIN_MENU
-            gameView?.thread?.join()
+            setContentView(R.layout.main_menu_layout)
+           // gameView?.thread?.join()
         } else {
             setContentView(R.layout.main_menu_layout)
             activityState = R.string.MAIN_MENU

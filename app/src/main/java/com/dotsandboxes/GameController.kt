@@ -5,7 +5,9 @@ import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintSet
 import java.util.*
 
-class GameController(val game:GameModel, val dims: ScreenDimensions) {
+class GameController(val game:GameModel, private val dims: ScreenDimensions) {
+    var previousSelectedNode:Point? = null
+
 
     fun actionPerformed(event: MotionEvent?): Boolean {
         if (event != null) {
@@ -37,15 +39,15 @@ class GameController(val game:GameModel, val dims: ScreenDimensions) {
         }
         return null
     }
-    private fun evaluateMove(nowSelectedNode: Point): Boolean{
-        val previousSelectedNode: Point? = checkPointsClickState()
+    fun evaluateMove(nowSelectedNode: Point): Boolean{
 
         if(previousSelectedNode != null && previousSelectedNode!=nowSelectedNode){
-            val newLine = Line(nowSelectedNode,previousSelectedNode)
-            if(nowSelectedNode.isLegalNeighbour(previousSelectedNode)
+            val newLine = Line(nowSelectedNode, previousSelectedNode!!)
+            if(nowSelectedNode.isLegalNeighbour(previousSelectedNode!!)
                 && !checkIfLineExists(newLine)){
                 game.players[game.turn%2].lines.add(newLine)
-                previousSelectedNode.clicked()
+                previousSelectedNode!!.clicked()
+                previousSelectedNode = null;
                 val squareClosed = checkIfSquareIsClosed()
                 if(squareClosed == 0) {
                     game.turn++
@@ -59,14 +61,18 @@ class GameController(val game:GameModel, val dims: ScreenDimensions) {
                     game.winner = evaluateWinner()
                 }
                 return true
+            } else {
+                previousSelectedNode!!.clicked()
+                previousSelectedNode = null;
             }
         } else {
             nowSelectedNode.clicked()
+            previousSelectedNode = nowSelectedNode
             return true
         }
         return false
     }
-    private fun evaluateWinner(): Player {
+    fun evaluateWinner(): Player {
         val player1Score = game.players[0].score
         val player2Score = game.players[1].score
         return if(player1Score>player2Score) game.players[0] else game.players[1]

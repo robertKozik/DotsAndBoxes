@@ -8,20 +8,22 @@ class Point(var xCoodinate: Int, var yCoordinate: Int,var context: Context) {
     var isClicked: Boolean = false
     var paint: Paint = Paint()
     var pointRadius: Float = 20F
+    val colorNodeSelected = ResourcesCompat.getColor(context.resources, R.color.nodeSelected, null)
+    val colorNodeNotSelected = ResourcesCompat.getColor(context.resources, R.color.nodeNotSelected, null)
 
 
     init{
-        paint.color = ResourcesCompat.getColor(context.resources, R.color.nodeNotSelected, null)
+        paint.color = colorNodeNotSelected
     }
 
     fun clicked() {
         if(isClicked){
             isClicked = false
-            paint.color = ResourcesCompat.getColor(context.resources, R.color.nodeNotSelected, null)
-            pointRadius =20F
+            paint.color = colorNodeNotSelected
+            pointRadius = 20F
         } else {
             isClicked = true
-            paint.color = ResourcesCompat.getColor(context.resources, R.color.nodeSelected, null)
+            paint.color = colorNodeSelected
             pointRadius = 30F
         }
     }
@@ -37,12 +39,14 @@ class Point(var xCoodinate: Int, var yCoordinate: Int,var context: Context) {
     }
 
     override fun equals(other: Any?): Boolean {
-        val other = other as Point
-        return (xCoodinate == other.xCoodinate) && (yCoordinate == other.yCoordinate)
+        val otherAsPoint = other as Point
+        return (xCoodinate == otherAsPoint.xCoodinate) && (yCoordinate == otherAsPoint.yCoordinate)
     }
 }
 
 class Line(var begin: Point, var end: Point) {
+    val VERTICAL: Int = 1
+    val HORIZONTAL: Int = 0
     var orientation: Int
 
     init {
@@ -50,9 +54,9 @@ class Line(var begin: Point, var end: Point) {
     }
     private fun specifyOrientation(): Int {
         return if(begin.xCoodinate == end.xCoodinate){
-            0
+            HORIZONTAL
         } else {
-            1
+            VERTICAL
         }
     }
 
