@@ -102,10 +102,11 @@
             android:layout_below="@id/PlayerOne"
             android:background="@drawable/fancy_button"
             android:text="Color"
-            android:textSize="10sp"
+            android:textSize="12sp"
             android:textAlignment="center"
             android:textColor="@color/font"
-            android:popupBackground="@color/background"/>
+            android:popupBackground="@color/background"
+            android:dropDownHorizontalOffset="3dp"/>
 
         <EditText
             android:id="@+id/PlayerTwoTextEdit"
@@ -134,7 +135,7 @@
             android:layout_height="25dp"
             android:layout_below="@id/PlayerTwo"
             android:background="@drawable/fancy_button"
-            android:textSize="10sp"
+            android:textSize="12sp"
             android:textColor="@color/font"
             android:textAlignment="center"
             android:popupBackground="@color/background"/>

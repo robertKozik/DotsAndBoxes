@@ -1,4 +1,3 @@
 package com.dotsandboxes
 
-class GameViewTest {
-}
+class GameViewTest

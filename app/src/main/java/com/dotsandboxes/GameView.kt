@@ -6,12 +6,11 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
-import android.preference.PreferenceManager
 import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.view.View
-import androidx.core.content.res.ResourcesCompat
+import androidx.preference.PreferenceManager
 
 class GameView(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
     private val dimensions = ScreenDimensions(context)

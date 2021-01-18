@@ -1,12 +1,13 @@
 package com.dotsandboxes
 
 import androidx.test.platform.app.InstrumentationRegistry
+import com.google.common.truth.Truth.assertThat
 import org.junit.Test
-import com.google.common.truth.Truth.*
 
 class GameControllerTest {
     val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-    val controller: GameController = GameController(GameModel(4,appContext), ScreenDimensions(appContext))
+    val controller: GameController =
+        GameController(GameModel(4, appContext), ScreenDimensions(appContext))
 
     @Test
     fun gameEndsAccordinigly() {

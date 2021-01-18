@@ -3,9 +3,9 @@ package com.dotsandboxes
 import android.graphics.Canvas
 import android.view.SurfaceHolder
 
-class GameThread(var surfaceHolder: SurfaceHolder, var gameView: GameView): Thread() {
-    var running:Boolean = false;
-    var canvas:Canvas? = null
+class GameThread(var surfaceHolder: SurfaceHolder, var gameView: GameView) : Thread() {
+    var running: Boolean = false
+    var canvas: Canvas? = null
 
 
     override fun run() {
@@ -15,7 +15,7 @@ class GameThread(var surfaceHolder: SurfaceHolder, var gameView: GameView): Thre
         val targetFPS: Long = 60
         val targetTime: Long = 1000 / targetFPS
 
-        while(running) {
+        while (running) {
             startTime = System.nanoTime()
             canvas = Canvas()
 
@@ -25,7 +25,8 @@ class GameThread(var surfaceHolder: SurfaceHolder, var gameView: GameView): Thre
                     this.gameView.update()
                     this.gameView.draw(canvas)
                 }
-            } catch (exception: Exception) {} finally {
+            } catch (exception: Exception) {
+            } finally {
                 if (canvas != null) {
                     try {
                         surfaceHolder.unlockCanvasAndPost(canvas)
@@ -34,12 +35,13 @@ class GameThread(var surfaceHolder: SurfaceHolder, var gameView: GameView): Thre
                     }
                 }
             }
-            timeMillis = (System.nanoTime() - startTime) / 1000000;
-            waitTime = targetTime - timeMillis;
+            timeMillis = (System.nanoTime() - startTime) / 1000000
+            waitTime = targetTime - timeMillis
 
             try {
                 sleep(waitTime)
-            } catch (exception: Exception) {}
+            } catch (exception: Exception) {
+            }
 
 
         }
