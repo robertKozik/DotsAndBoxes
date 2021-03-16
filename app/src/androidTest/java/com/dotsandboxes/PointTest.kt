@@ -27,6 +27,22 @@ class PointTest {
     }
 
     @Test
+    fun multipleClick() {
+        val appContext = InstrumentationRegistry.getInstrumentation().targetContext
+        val testPoint = Point(1, 1, appContext)
+        val expectedColor =
+            ResourcesCompat.getColor(appContext.resources, R.color.nodeSelected, null)
+
+        for (i in 0..10) {
+            testPoint.clicked();
+        }
+
+        assertThat(testPoint.paint.color).isEqualTo(expectedColor).also {
+            assertThat(testPoint.pointRadius).isEqualTo(30F)
+        }
+    }
+
+    @Test
     fun twoPointsCannotBeConnected() {
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
 

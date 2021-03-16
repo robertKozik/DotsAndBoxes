@@ -10,6 +10,7 @@ import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.view.View
+import android.widget.Toast
 import androidx.preference.PreferenceManager
 
 class GameView(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
@@ -20,7 +21,7 @@ class GameView(context: Context) : SurfaceView(context), SurfaceHolder.Callback 
         GameModel(myPreferences.getInt(context.resources.getString(R.string.BoardSize), 4), context)
     private val gameController = GameController(game, dimensions)
     lateinit var thread: GameThread
-    //private val rectangle: Rectangle = Rectangle(dimensions)
+
 
     init {
         createThread()
@@ -33,7 +34,7 @@ class GameView(context: Context) : SurfaceView(context), SurfaceHolder.Callback 
     }
 
     fun update() {
-        //rectangle.updateElementPosition()
+
     }
 
     override fun draw(canvas: Canvas?) {
@@ -222,7 +223,11 @@ class GameView(context: Context) : SurfaceView(context), SurfaceHolder.Callback 
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        return gameController.actionPerformed(event)
+        if( ! gameController.actionPerformed(event)) {
+            Toast.makeText(this.context, "Illegal move", Toast.LENGTH_SHORT).show()
+            return true
+        }
+        return false
     }
 }
 

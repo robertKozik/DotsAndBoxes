@@ -11,11 +11,22 @@ class GameControllerTest {
 
     @Test
     fun gameEndsAccordinigly() {
+        for(i in 0..controller.game.mapSize-2){
+            controller.game.squaresClosed.add(Point(i, 0, appContext));
+            controller.game.squaresClosed.add(Point(i, 2, appContext));
+            controller.game.squaresClosed.add(Point(i, 1, appContext));
+        }
 
+        controller.evaluateMove(Point(1,1,appContext));
+        controller.evaluateMove(Point(1,2,appContext));
+
+        assertThat(controller.game.winner).isNotNull().also {
+            assertThat(controller.game.winner).isEqualTo(controller.game.players[1])
+        }
     }
 
     @Test
-    fun BiggerScoreWins() {
+    fun biggerScoreWins() {
         controller.game.players[0].score = 5
         controller.game.players[1].score = 4
         val winner = controller.evaluateWinner()

@@ -40,8 +40,7 @@ class GameController(val game: GameModel, private val dims: ScreenDimensions) {
     }
 
     fun evaluateMove(nowSelectedNode: Point): Boolean {
-
-        if (previousSelectedNode != null && previousSelectedNode != nowSelectedNode) {
+        if (previousSelectedNode != null) {
             val newLine = Line(nowSelectedNode, previousSelectedNode!!)
             if (nowSelectedNode.isLegalNeighbour(previousSelectedNode!!)
                 && !checkIfLineExists(newLine)
@@ -65,6 +64,7 @@ class GameController(val game: GameModel, private val dims: ScreenDimensions) {
             } else {
                 previousSelectedNode!!.clicked()
                 previousSelectedNode = null
+                return false
             }
         } else {
             nowSelectedNode.clicked()
@@ -104,7 +104,6 @@ class GameController(val game: GameModel, private val dims: ScreenDimensions) {
     }
 
     private fun checkIfSquareIsClosed(): Int {
-        //TODO "Zrób lepiej"
         var size = game.squaresClosed.size
         for (x in 0..game.mapSize) {
             for (y in 0..game.mapSize) {

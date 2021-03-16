@@ -5,11 +5,11 @@ import android.graphics.Paint
 import androidx.core.content.res.ResourcesCompat
 import kotlin.math.abs
 
-class Point(var xCoodinate: Int, var yCoordinate: Int, var context: Context) {
+class Point(var xCoodinate: Int, var yCoordinate: Int, context: Context) {
     var isClicked: Boolean = false
     var paint: Paint = Paint()
     var pointRadius: Float = 20F
-    private val colorNodeSelected =
+    private var colorNodeSelected =
         ResourcesCompat.getColor(context.resources, R.color.nodeSelected, null)
     private val colorNodeNotSelected =
         ResourcesCompat.getColor(context.resources, R.color.nodeNotSelected, null)
@@ -33,10 +33,10 @@ class Point(var xCoodinate: Int, var yCoordinate: Int, var context: Context) {
 
     fun isLegalNeighbour(point: Point): Boolean { // legal Neighbour means that they can be connected
         if (xCoodinate == point.xCoodinate) {
-            return abs((yCoordinate - point.yCoordinate)) <= 1
+            return abs((yCoordinate - point.yCoordinate)) == 1
         }
         if (yCoordinate == point.yCoordinate) {
-            return abs((xCoodinate - point.xCoodinate)) <= 1
+            return abs((xCoodinate - point.xCoodinate)) == 1
         }
         return false
     }
